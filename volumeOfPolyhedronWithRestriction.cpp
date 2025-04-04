@@ -1,6 +1,23 @@
 /*
  * MaoHuPi (c) 2025
  * 邊長約束下的凸多面體之體積計算
+ *
+ * input:
+0
+10e-5
+10
+1
+4
+6
+0 1 5
+1 2 6
+2 0 7
+0 3 6
+1 3 7
+2 3 5
+
+ * output:
+19.478
  */
 
 #include <iostream>
@@ -163,7 +180,7 @@ double getVolume(vector<array<double, 3>> pointData, bool logSamplePoints)
 			for (int z = zMin; z <= zMax; z++)
 			{
 				// x = 100; y = 100; z = 100; //
-				array<double, 3> samplePoint = {1.0 * x, 1.0 * y, 1.0 * z};
+				array<double, 3> samplePoint = {(double)x, (double)y, (double)z};
 				vector<array<double, 3>> vecToPoints(pointData.size());
 				for (int i = 0; i < pointData.size(); i++)
 				{
@@ -208,6 +225,8 @@ double getVolume(vector<array<double, 3>> pointData, bool logSamplePoints)
 
 int main()
 {
+	const bool customizeMode = true;
+
 	// 是否印出擬合點與取樣點資料
 	bool logSamplePoints = false;
 	// 擬合約束條件時，結束擬合所採用的最大誤差值
@@ -216,16 +235,49 @@ int main()
 	double resolution = 15;
 	// 取樣幾次後取平均
 	int sampleTimes = 1;
+	if (customizeMode)
+	{
+		cout << "logSamplePoints(0 or 1, 0): ";
+		cin >> logSamplePoints;
+		cout << "errorThreshold(double, 10e-5): ";
+		cin >> errorThreshold;
+		cout << "resolution(double, 15): ";
+		cin >> resolution;
+		cout << "sampleTimes(int, 1): ";
+		cin >> sampleTimes;
+	}
 
 	// 節點數目
 	int pointNum = 4;
+	if (customizeMode)
+	{
+		cout << "pointNum(int, 4): ";
+		cin >> pointNum;
+	}
 	// 約束條件
-	double a = 5, b = 6, c = 7;
-	a *= resolution;
-	b *= resolution;
-	c *= resolution;
-	vector<std::array<double, 3>> restrictionData = {
-		{0, 1, a}, {1, 2, b}, {2, 0, c}, {0, 3, b}, {1, 3, c}, {2, 3, a}};
+	vector<array<double, 3>> restrictionData;
+	if (customizeMode)
+	{
+		int restrictionNum;
+		cout << "restrictionData(lineCount and data with [point 1 index(int)] [point 2 index(int)] [target distance(double)]): " << endl;
+		cin >> restrictionNum;
+		int p1Index, p2Index;
+		double targetDistance;
+		array<double, 3> restriction;
+		for (int i = 0; i < restrictionNum; i++)
+		{
+			cin >> p1Index >> p2Index >> targetDistance;
+			restriction = {(double)p1Index, (double)p2Index, targetDistance * resolution};
+			restrictionData.push_back(restriction);
+		}
+	} else {
+		double a = 5, b = 6, c = 7;
+		a *= resolution;
+		b *= resolution;
+		c *= resolution;
+		restrictionData = {
+			{0, 1, a}, {1, 2, b}, {2, 0, c}, {0, 3, b}, {1, 3, c}, {2, 3, a}};
+	}
 
 	// 取樣迴圈
 	double volumeAv = 0;
