@@ -21,6 +21,7 @@
  */
 
 #include <iostream>
+#include <iomanip>
 #include <vector>
 #include <array>
 
@@ -270,7 +271,9 @@ int main()
 			restriction = {(double)p1Index, (double)p2Index, targetDistance * resolution};
 			restrictionData.push_back(restriction);
 		}
-	} else {
+	}
+	else
+	{
 		double a = 5, b = 6, c = 7;
 		a *= resolution;
 		b *= resolution;
@@ -295,6 +298,6 @@ int main()
 	volumeAv /= sampleTimes;
 
 	// 印出體積平均值
-	cout << volumeAv << endl;
+	cout << setprecision(20) << volumeAv << endl;
 	return 0;
 }
